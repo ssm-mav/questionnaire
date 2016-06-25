@@ -14,4 +14,63 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
     <description>Spring公共配置 </description>
+    <!-- 开启定时任务 -->
+    <task:annotation-driven/>
+    
+    <context:component-scan base-package="com.ssm.questionnaire" use-default-filters="true">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    
+    <!-- MyBatis配置 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 自动扫描entity目录, 省掉Configuration.xml里的手工配置 -->
+        <property name="typeAliasesPackage" value="com.ssm.questionnaire.model;" /> <!-- 多个路径用分号隔开 -->
+        <!-- 显式指定Mapper文件位置 -->
+        <property name="mapperLocations" value="classpath*:/mybatis/*Mapper.xml" />
+        <property name="configLocation" value="classpath:/mybatis/config.xml"/>
+    </bean>
+    
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+       <constructor-arg index="0" ref="sqlSessionFactory" />
+       <constructor-arg index="1" value="BATCH" />
+    </bean>
+    
+    <!-- 扫描basePackage接口 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.ssm.questionnaire.dao" />
+    </bean>
+
+    <!-- 使用annotation定义事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+    <!-- 数据源配置, 使用Tomcat JDBC连接池 -->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+        <!-- Connection Info -->
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+
+        <!-- Connection Pooling Info -->
+        <property name="maxActive" value="200" />
+        <property name="maxIdle" value="100" />
+        <property name="minIdle" value="0" />
+        <property name="defaultAutoCommit" value="false" />
+    </bean>
+    
+    <!-- 配置jdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- production环境 -->
+    <beans profile="production">
+        <context:property-placeholder ignore-unresolvable="true" file-encoding="utf-8" 
+            location="classpath:config.properties,classpath:jdbc.properties" />
+    </beans>
+    
 </beans>
