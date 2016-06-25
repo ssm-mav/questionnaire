@@ -1,5 +1,5 @@
 package com.ssm.questionnaire.base;
 
-public class BaseController {
+public abstract class BaseController {
 
 }
