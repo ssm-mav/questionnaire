@@ -2,7 +2,7 @@
 
 
 ## 1. Question 问题
-```json
+```
 {
 	id                int(11)    //question id
 	content           varchar(3000)  //question tital
@@ -17,7 +17,7 @@
 ```
 
 ## 2. Question Type 问题类型
-```json
+```
 {
 	id               int(11)
 	name             varchar(100) //支持1.单选题，2多选题，3简答题
@@ -26,7 +26,7 @@
 ```
 
 ## 3. Option 单选题多选题的选项
-```json
+```
 {
 	id            int(11)
 	question_id   int(11)
@@ -36,7 +36,7 @@
 ```
 
 ## 4. Survey问卷表
-```json
+```
 {
 	id             int(11)
 	title          varchar(100)
